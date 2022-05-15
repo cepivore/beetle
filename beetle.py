@@ -173,7 +173,7 @@ while True:
     board.push(move)
     print(board)
 
-    ai_move = search_pos(board, 2, -infinity, infinity)
+    ai_move = search_pos(board, 4, -infinity, infinity)
     board.push(ai_move)
     print("Beetle played: \n")
     print(ai_move)
