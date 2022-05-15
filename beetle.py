@@ -4,7 +4,7 @@ import chess.polyglot
 
 infinity = 1000000
 movecount = 0
-MAX_TIME_MS = 1000
+MAX_TIME_MS = 10000
 
 board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
@@ -203,7 +203,7 @@ while True:
 
     start_time = time.perf_counter()
     ply = 0
-    ai_move = search_pos(board, 16, -infinity, infinity)
+    ai_move = search_pos(board, 2, -infinity, infinity)
     board.push(ai_move)
     print("Beetle played: ")
     print(ai_move)
