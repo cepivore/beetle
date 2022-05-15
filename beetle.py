@@ -4,14 +4,11 @@ import chess.polyglot
 
 infinity = 1000000
 movecount = 0
-MAX_TIME_MS = 5000
+MAX_TIME_MS = 1000
 
 board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
 class Heuristics:
-
-    # The tables denote the points scored for the position of the chess pieces on the board.
-
     PAWN_TABLE = np.array([
           0,  0,  0,  0,  0,  0,  0,  0,
          15, 15, 15,-20,-20, 15, 15, 15,
@@ -22,7 +19,6 @@ class Heuristics:
          50, 50, 50, 50, 50, 50, 50, 50,
           0,  0,  0,  0,  0,  0,  0,  0
     ])
-
     KNIGHT_TABLE = np.array([
          -50, -40, -30, -30, -30, -30, -40, -50,
          -40, -20,   0,   5,   5,   0, -20, -40,
@@ -33,7 +29,6 @@ class Heuristics:
          -40, -20,   0,   0,   0,   0, -20, -40,
          -50, -40, -30, -30, -30, -30, -40, -50
     ])
-
     BISHOP_TABLE = np.array([
          -20, -10, -10, -10, -10, -10, -10, -20,
          -10,   5,   0,   0,   0,   0,   5, -10,
@@ -44,7 +39,6 @@ class Heuristics:
          -10,   0,   0,   0,   0,   0,   0, -10,
          -20, -10, -10, -10, -10, -10, -10, -20
     ])
-
     ROOK_TABLE = np.array([
           0,  0,  0,  5,  5,  0,  0,  0,
          -5,  0,  0,  0,  0,  0,  0, -5,
@@ -55,7 +49,6 @@ class Heuristics:
           5, 10, 10, 10, 10, 10, 10,  5,
           0,  0,  0,  0,  0,  0,  0,  0
     ])
-
     QUEEN_TABLE = np.array([
          -20, -10, -10, -5, -5, -10, -10, -20,
          -10,   0,   5,  0,  0,   0,   0, -10,
@@ -66,7 +59,6 @@ class Heuristics:
          -10,   0,   0,  0,  0,   0,   0, -10,
          -20, -10, -10, -5, -5, -10, -10, -20
     ])
-
     KING_TABLE = np.array([
           40,  40,   0,  0,  0,   0,  40,  40,
           -5,  15,  -5, -5, -5,  -5,  15,  -5,
@@ -106,7 +98,6 @@ def get_piece_val(PieceType):
         value = 1000
     if PieceType == chess.KING:
         value = 100000
-    # value = value if (board.piece_at(place)).color else -value
     return value
 
 def negamax(board, depth, alpha, beta):
@@ -205,10 +196,10 @@ timems = MAX_TIME_MS
 
 while True:
 
-#    move = input("Make a move: \n")
-#    move = chess.Move.from_uci(move)
-#    board.push(move)
-#    print(board)
+    move = input("Make a move: \n")
+    move = chess.Move.from_uci(move)
+    board.push(move)
+    print(board)
 
     start_time = time.perf_counter()
     ply = 0
@@ -218,10 +209,10 @@ while True:
     print(ai_move)
     print(board)
     
-    move = input("Make a move: \n")
-    move = chess.Move.from_uci(move)
-    board.push(move)
-    print(board)
+#    move = input("Make a move: \n")
+#    move = chess.Move.from_uci(move)
+#    board.push(move)
+#    print(board)
 
     movecount += 1
     print("moves played: ")
