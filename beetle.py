@@ -2,6 +2,10 @@ import chess, chess.pgn, time, math, io
 import numpy as np 
 import chess.polyglot
 
+infinity = 1000000
+movecount = 0
+MAX_TIME_MS = 30000
+
 board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
 class Heuristics:
@@ -106,31 +110,59 @@ def get_piece_val(PieceType):
     return value
 
 def negamax(board, depth, alpha, beta):
+    global timems
+    global start_time
+    global ply
+    best_score = -infinity
+    incheck = board.is_check()
+    legal = 0
+
+    if is_time_limit_reached():
+        return 0
+    
+    if incheck:
+        depth += 1
+
     if depth==0:
         return qSearch(board, alpha, beta)
-    best_score = -infinity
+    
     for move in board.legal_moves:
         board.push(move)
+        ply += 1
+        legal += 1
         best_score = max(best_score, -negamax(board, depth-1, -beta, -alpha))
         board.pop()
+        ply -= 1
         alpha = max(alpha, best_score)
         if alpha >= beta:
             break
+    if legal == 0:
+        if incheck:
+            return -infinity + ply
+        else:
+            return 0
     return (best_score)
 
 def search_pos(board, depth, alpha, beta):
+    global ply
     best_move = None
     best_score = -infinity
     for move in board.legal_moves:
         board.push(move)
+        ply += 1
         score = -negamax(board, depth-1, alpha, beta)
         board.pop()
+        ply -= 1
         if score > best_score:
             best_score = score
             best_move = move
+        if is_time_limit_reached():
+            break
     return best_move
 
 def qSearch(board, alpha, beta):
+    if is_time_limit_reached():
+        return 0
     score = Heuristics.evaluate(board)
     if score >= beta:
         return beta
@@ -160,11 +192,16 @@ def get_pos_val(board, PieceType, table):
             black += get_piece_val(PieceType)
         return white - black
 
-infinity = 1000000
-movecount = 0
+def is_time_limit_reached():
+    global start_time
+    global timems
+
+    return 1000 * (time.perf_counter() - start_time) >= timems
+
 print(board)
 print("moves played: ")
 print(movecount)
+timems = MAX_TIME_MS
 
 while True:
 
@@ -173,7 +210,9 @@ while True:
     board.push(move)
     print(board)
 
-    ai_move = search_pos(board, 4, -infinity, infinity)
+    start_time = time.perf_counter()
+    ply = 0
+    ai_move = search_pos(board, 16, -infinity, infinity)
     board.push(ai_move)
     print("Beetle played: \n")
     print(ai_move)
