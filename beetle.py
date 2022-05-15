@@ -4,7 +4,7 @@ import chess.polyglot
 
 infinity = 1000000
 movecount = 0
-MAX_TIME_MS = 30000
+MAX_TIME_MS = 5000
 
 board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
@@ -205,23 +205,23 @@ timems = MAX_TIME_MS
 
 while True:
 
-    move = input("Make a move: \n")
-    move = chess.Move.from_uci(move)
-    board.push(move)
-    print(board)
+#    move = input("Make a move: \n")
+#    move = chess.Move.from_uci(move)
+#    board.push(move)
+#    print(board)
 
     start_time = time.perf_counter()
     ply = 0
     ai_move = search_pos(board, 16, -infinity, infinity)
     board.push(ai_move)
-    print("Beetle played: \n")
+    print("Beetle played: ")
     print(ai_move)
     print(board)
     
-#    move = input("Make a move: \n")
-#    move = chess.Move.from_uci(move)
-#    board.push(move)
-#    print(board)
+    move = input("Make a move: \n")
+    move = chess.Move.from_uci(move)
+    board.push(move)
+    print(board)
 
     movecount += 1
     print("moves played: ")
