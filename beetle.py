@@ -4,8 +4,9 @@ import chess.polyglot
 
 infinity = 1000000
 movecount = 0
-MAX_TIME_MS = 10000
-MAX_DEPTH = 16
+MAX_TIME_MS = 120000
+MAX_DEPTH = 4
+global pv
 
 board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
 
@@ -114,8 +115,10 @@ def negamax(board, depth, alpha, beta):
     
     if depth==0:
         return qSearch(board, alpha, beta)
+
+    order = order_moves(board)
     
-    for move in board.legal_moves:
+    for move in order:
         board.push(move)
         ply += 1
         legal += 1
@@ -192,7 +195,7 @@ def is_time_limit_reached():
 
 def order_moves(board):
     moves = list(board.legal_moves)
-    moves.sort(key=lambda m: board.is_capture(m), reverse=True)
+    moves.sort(key=lambda m: board.is_capture(m) + (m == pv), reverse=True)
     return moves
 
 print(board)
@@ -210,7 +213,7 @@ while True:
 
     start_time = time.perf_counter()
     ply = 0
-
+    pv = None
     for d in range(1, depth+1):
 
         ai_move = search_pos(board, d, -infinity, infinity)
@@ -220,12 +223,15 @@ while True:
         if elapse >= timems:
             break
 
-        bestmove = ai_move
+        pv = ai_move
         
     board.push(ai_move)
 
     print("Beetle played: ")
     print(ai_move)
+    print("after thinking for ")
+    print(elapse / 1000)
+    print(" seconds")
     print(board)
     
 #    move = input("Make a move: \n")
