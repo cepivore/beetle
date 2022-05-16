@@ -96,7 +96,7 @@ def get_piece_val(PieceType):
     if PieceType == chess.ROOK:
         value = 500
     if PieceType == chess.QUEEN:
-        value = 1000
+        value = 900
     if PieceType == chess.KING:
         value = 100000
     return value
@@ -136,7 +136,10 @@ def search_pos(board, depth, alpha, beta):
     global ply
     best_move = None
     best_score = -infinity
-    for move in board.legal_moves:
+
+    order = order_moves(board)
+
+    for move in order:
         board.push(move)
         ply += 1
         score = -negamax(board, depth-1, alpha, beta)
@@ -186,6 +189,11 @@ def is_time_limit_reached():
     global timems
 
     return 1000 * (time.perf_counter() - start_time) >= timems
+
+def order_moves(board):
+    moves = list(board.legal_moves)
+    moves.sort(key=lambda m: board.is_capture(m), reverse=True)
+    return moves
 
 print(board)
 print("moves played: ")
