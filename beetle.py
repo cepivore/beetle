@@ -117,6 +117,9 @@ def negamax(board, depth, alpha, beta):
     if depth==0:
         return qSearch(board, alpha, beta)
 
+    if board.is_check():
+            depth+=1
+
     order = order_moves(board)
     
     for move in order:
@@ -197,7 +200,7 @@ def is_time_limit_reached():
 def order_moves(board):
     moves = list(board.legal_moves)
     moves.sort(key=lambda m: board.is_capture(m) + (m == pv), reverse=True)
-    del moves[10:]
+    del moves[15:]
     return moves
 
 print(board)
