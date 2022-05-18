@@ -4,11 +4,12 @@ import chess.polyglot
 
 infinity = 1000000
 movecount = 0
-MAX_TIME_MS = 120000
-MAX_DEPTH = 4
+MAX_TIME_MS = 10000
+MAX_DEPTH = 16
 global pv
+global opening_move
 
-board = chess.Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1")
+board = chess.Board()
 
 class Heuristics:
     PAWN_TABLE = np.array([
@@ -196,6 +197,7 @@ def is_time_limit_reached():
 def order_moves(board):
     moves = list(board.legal_moves)
     moves.sort(key=lambda m: board.is_capture(m) + (m == pv), reverse=True)
+    del moves[10:]
     return moves
 
 print(board)
@@ -214,25 +216,42 @@ while True:
     start_time = time.perf_counter()
     ply = 0
     pv = None
-    for d in range(1, depth+1):
 
-        ai_move = search_pos(board, d, -infinity, infinity)
+    with chess.polyglot.open_reader("Titans.bin")as reader:
+        opening = list()
+        for entry in reader.find_all(board):
+            opening.append(entry.move)
+        del opening[1:]
+        opening_move = opening
 
-        elapse = 1000 * (time.perf_counter() - start_time)
+    if opening_move:
+        for move in opening_move:
+            board.push(move)
+            print("Beetle played: ")
+            print(move)
+            print("after googling theory")
+            print(board)
+    else:
 
-        if elapse >= timems:
-            break
+        for d in range(1, depth+1):
 
-        pv = ai_move
+            ai_move = search_pos(board, d, -infinity, infinity)
+
+            elapse = 1000 * (time.perf_counter() - start_time)
+
+            if elapse >= timems:
+                break
+
+            pv = ai_move
         
-    board.push(ai_move)
+        board.push(ai_move)
 
-    print("Beetle played: ")
-    print(ai_move)
-    print("after thinking for ")
-    print(elapse / 1000)
-    print(" seconds")
-    print(board)
+        print("Beetle played: ")
+        print(ai_move)
+        print("after thinking for ")
+        print(elapse / 1000)
+        print(" seconds")
+        print(board)
     
 #    move = input("Make a move: \n")
 #    move = chess.Move.from_uci(move)
